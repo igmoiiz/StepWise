@@ -6,6 +6,7 @@ import 'package:stepwise/presentation/utilities/components/custom_animated_butto
 import 'package:stepwise/presentation/utilities/components/custom_input_field.dart';
 import 'package:stepwise/presentation/utilities/navigation/elegant_route.dart';
 import 'package:stepwise/presentation/view/authentication/forgot_password.dart';
+import 'package:stepwise/presentation/view/authentication/sign_up.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -217,17 +218,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               child: GestureDetector(
                                 onTap: () {
                                   // Navigate to sign up
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Navigate to Sign Up page',
-                                        style: GoogleFonts.urbanist(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      backgroundColor: colorScheme.primary,
-                                    ),
-                                  );
+                                  Navigator.of(
+                                    context,
+                                  ).push(elegantRoute(const SignUpPage()));
                                 },
                                 child: Text(
                                   'Sign Up',
