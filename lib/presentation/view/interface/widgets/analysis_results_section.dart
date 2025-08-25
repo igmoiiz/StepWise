@@ -186,7 +186,8 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
                       ],
                     ),
                     const SizedBox(height: 24),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           analysis.marketAnalysis.successProbability,
@@ -197,33 +198,31 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
                             ),
                           ),
                         ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Container(
-                            height: 12,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: theme.colorScheme.surfaceContainerHighest,
-                            ),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                final probability = int.tryParse(analysis.marketAnalysis.successProbability.replaceAll('%', '')) ?? 0;
-                                final width = constraints.maxWidth * (probability / 100);
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    width: width,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: _getSuccessProbabilityColor(
-                                        analysis.marketAnalysis.successProbability,
-                                      ),
+                        const SizedBox(height: 16),
+                        Container(
+                          height: 12,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: theme.colorScheme.surfaceContainerHighest,
+                          ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final probability = int.tryParse(analysis.marketAnalysis.successProbability.replaceAll('%', '')) ?? 0;
+                              final width = constraints.maxWidth * (probability / 100);
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  width: width,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: _getSuccessProbabilityColor(
+                                      analysis.marketAnalysis.successProbability,
                                     ),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
