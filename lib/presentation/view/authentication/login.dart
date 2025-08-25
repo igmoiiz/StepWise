@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stepwise/presentation/utilities/components/custom_animated_button.dart';
 import 'package:stepwise/presentation/utilities/components/custom_input_field.dart';
+import 'package:stepwise/presentation/utilities/navigation/elegant_route.dart';
+import 'package:stepwise/presentation/view/authentication/forgot_password.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -86,7 +88,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       setState(() => _isLoading = true);
 
       // Simulate login process
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2), () {
+        //  TODO: Implement Login
+      });
 
       setState(() => _isLoading = false);
 
@@ -104,38 +108,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _handleForgotPassword() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).colorScheme.onSurface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Reset Password',
-          style: GoogleFonts.urbanist(
-            color: Theme.of(context).colorScheme.onPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          'Password reset functionality would be implemented here.',
-          style: GoogleFonts.urbanist(
-            color: Theme.of(context).colorScheme.onTertiary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Close',
-              style: GoogleFonts.urbanist(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    Navigator.of(context).push(elegantRoute(ForgotPasswordPage()));
   }
 
   @override

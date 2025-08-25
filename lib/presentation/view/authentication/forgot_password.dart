@@ -296,13 +296,27 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            'Remember your password? Sign In',
-                            style: GoogleFonts.urbanist(
-                              color: colorScheme.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Remember your password? ',
+                                style: GoogleFonts.urbanist(
+                                  color: colorScheme.onTertiary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Sign In',
+                                style: GoogleFonts.urbanist(
+                                  color: colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
