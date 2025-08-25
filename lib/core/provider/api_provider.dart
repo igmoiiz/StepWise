@@ -3,16 +3,36 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import '../models/analysis_models.dart';
+import 'firebase_service.dart';
 
 class ApplicationProgramInterfaceProvider extends ChangeNotifier {
   // Instance for google generative model
   final GenerativeModel model;
+  final FirebaseService _firebaseService = FirebaseService();
+  
+  bool _isLoading = false;
+  String? _error;
+  AnalysisResult? _currentAnalysis;
+
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  AnalysisResult? get currentAnalysis => _currentAnalysis;
 
   // Constructor
   ApplicationProgramInterfaceProvider(String apiKey)
     : model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
 
-  Future<Map<String, dynamic>?> breakdownGeneration(String idea) async {
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
+  Future<AnalysisResult?> breakdownGeneration(String idea) async {
+    _isLoading = true;
+    _error = null;
+    _currentAnalysis = null;
+    notifyListeners();
     final prompt =
         """
         You are StepWise AI. 
@@ -48,15 +68,35 @@ class ApplicationProgramInterfaceProvider extends ChangeNotifier {
         Return structured JSON only.
         """;
 
-    final response = await model.generateContent([Content.text(prompt)]);
-    final rawText = response.text;
-
-    if (rawText == null) return null;
-
     try {
-      return jsonDecode(rawText) as Map<String, dynamic>;
+      final response = await model.generateContent([Content.text(prompt)]);
+      final rawText = response.text;
+
+      if (rawText == null) {
+        _error = "No response received from AI";
+        _isLoading = false;
+        notifyListeners();
+        return null;
+      }
+
+      final jsonData = jsonDecode(rawText) as Map<String, dynamic>;
+      final analysis = AnalysisResult.fromJson(jsonData);
+      
+      // Save to Firebase
+      await _firebaseService.saveAnalysis(
+        idea: idea,
+        analysis: jsonData,
+      );
+      
+      _currentAnalysis = analysis;
+      _isLoading = false;
+      notifyListeners();
+      return analysis;
+      
     } catch (e) {
-      debugPrint("JSON parsing error: $e");
+      _error = "Failed to analyze idea: ${e.toString()}";
+      _isLoading = false;
+      notifyListeners();
       return null;
     }
   }
