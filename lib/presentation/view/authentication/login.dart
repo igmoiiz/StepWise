@@ -2,11 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stepwise/core/components/failure/faliure_bar.dart';
+import 'package:stepwise/core/components/success/success_bar.dart';
+import 'package:stepwise/core/controller/auth_controller.dart';
+import 'package:stepwise/core/controller/controllers.dart';
 import 'package:stepwise/presentation/utilities/components/custom_animated_button.dart';
 import 'package:stepwise/presentation/utilities/components/custom_input_field.dart';
 import 'package:stepwise/presentation/utilities/navigation/elegant_route.dart';
 import 'package:stepwise/presentation/view/authentication/forgot_password.dart';
 import 'package:stepwise/presentation/view/authentication/sign_up.dart';
+import 'package:stepwise/presentation/view/interface/interface.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,9 +21,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  //  Instance for controllers
+  final Controllers _controllers = Controllers();
+
+  //  Instance for authentication controller
+  final AuthController _authController = AuthController();
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -59,8 +66,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _controllers.emailController.dispose();
+    _controllers.passwordController.dispose();
     super.dispose();
   }
 
@@ -85,12 +92,28 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
+    if (_controllers.formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
       // Simulate login process
       await Future.delayed(const Duration(seconds: 2), () {
-        //  TODO: Implement Login
+        _authController
+            .signInWithEmailPassword(
+              _controllers.emailController.text,
+              _controllers.passwordController.text,
+              context,
+            )
+            .then((value) {
+              Navigator.of(context).push(elegantRoute(const InterfacePage()));
+              successBar(context: context, message: "Signed in Successfully");
+            })
+            .onError((error, stackTrace) {
+              faliureBar(
+                context: context,
+                message:
+                    "Error While Signing in Please Try again Later: $error",
+              );
+            });
       });
 
       setState(() => _isLoading = false);
@@ -126,7 +149,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Form(
-                key: _formKey,
+                key: _controllers.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -159,7 +182,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       label: 'Email',
                       hint: 'Enter your email address',
                       icon: Icons.email_outlined,
-                      controller: _emailController,
+                      controller: _controllers.emailController,
                       validator: _validateEmail,
                     ),
 
@@ -171,7 +194,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       hint: 'Enter your password',
                       icon: Icons.lock_outlined,
                       isPassword: true,
-                      controller: _passwordController,
+                      controller: _controllers.passwordController,
                       validator: _validatePassword,
                     ),
 
