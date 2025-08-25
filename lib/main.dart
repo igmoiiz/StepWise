@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stepwise/presentation/utilities/theme.dart';
-import 'package:stepwise/presentation/view/interface/interface.dart';
+import 'package:stepwise/presentation/view/auth_gate.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
       theme: lightMode,
       darkTheme: darkMode,
       themeMode: ThemeMode.system,
-      home: const InterfacePage(),
+      home: const AuthGate(),
       debugShowCheckedModeBanner: false,
     );
   }
