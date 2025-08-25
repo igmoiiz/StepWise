@@ -9,4 +9,15 @@ class Controllers {
       TextEditingController();
   //  Global Keys
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  //  Animation Controllers
+  late AnimationController fadeController;
+  late AnimationController slideController;
+
+  //  Animations Variables
+  late Animation<double> fadeAnimation;
+  late Animation<Offset> slideAnimation;
+
+  //  Loading Variable
+  bool isLoading = false;
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stepwise/core/controller/auth_controller.dart';
+import 'package:stepwise/core/controller/authentication/auth_controller.dart';
 import 'package:stepwise/presentation/view/authentication/login.dart';
 import 'package:stepwise/presentation/view/interface/interface.dart';
 
