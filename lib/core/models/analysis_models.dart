@@ -1,5 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class Subtask {
+  final String description;
+  final String complexity;
+
+  Subtask({
+    required this.description,
+    required this.complexity,
+  });
+
+  factory Subtask.fromJson(Map<String, dynamic> json) {
+    return Subtask(
+      description: json['description'] ?? '',
+      complexity: json['complexity'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'complexity': complexity,
+    };
+  }
+}
+
 class Feature {
   final String name;
   final List<String> subtasks;
@@ -88,14 +112,40 @@ class CustomerSegment {
   }
 }
 
+class CustomerValue {
+  final String framer;
+  final String vendor;
+
+  CustomerValue({
+    required this.framer,
+    required this.vendor,
+  });
+
+  factory CustomerValue.fromJson(Map<String, dynamic> json) {
+    return CustomerValue(
+      framer: json['framer'] ?? '',
+      vendor: json['vendor'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'framer': framer,
+      'vendor': vendor,
+    };
+  }
+}
+
 class MarketAnalysis {
   final List<CustomerSegment> targetCustomers;
   final String customerValue;
   final String estimatedMarketSize;
   final String adoptionRate;
+  final String adoptionRateReasoning;
   final String competitionLevel;
+  final String competitionLevelReasoning;
   final List<String> risks;
-  final int successProbability;
+  final String successProbability;
   final String detailedCommentary;
 
   MarketAnalysis({
@@ -103,7 +153,9 @@ class MarketAnalysis {
     required this.customerValue,
     required this.estimatedMarketSize,
     required this.adoptionRate,
+    required this.adoptionRateReasoning,
     required this.competitionLevel,
+    required this.competitionLevelReasoning,
     required this.risks,
     required this.successProbability,
     required this.detailedCommentary,
@@ -114,12 +166,14 @@ class MarketAnalysis {
       targetCustomers: (json['target_customers'] as List?)
           ?.map((e) => CustomerSegment.fromJson(e))
           .toList() ?? [],
-      customerValue: json['customer_value'] ?? '',
+      customerValue: json['customer_value']?.toString() ?? '',
       estimatedMarketSize: json['estimated_market_size'] ?? '',
       adoptionRate: json['adoption_rate'] ?? '',
+      adoptionRateReasoning: json['adoption_rate_reasoning'] ?? '',
       competitionLevel: json['competition_level'] ?? '',
+      competitionLevelReasoning: json['competition_level_reasoning'] ?? '',
       risks: List<String>.from(json['risks'] ?? []),
-      successProbability: json['success_probability'] ?? 0,
+      successProbability: json['success_probability']?.toString() ?? '0',
       detailedCommentary: json['detailed_commentary'] ?? '',
     );
   }
@@ -130,7 +184,9 @@ class MarketAnalysis {
       'customer_value': customerValue,
       'estimated_market_size': estimatedMarketSize,
       'adoption_rate': adoptionRate,
+      'adoption_rate_reasoning': adoptionRateReasoning,
       'competition_level': competitionLevel,
+      'competition_level_reasoning': competitionLevelReasoning,
       'risks': risks,
       'success_probability': successProbability,
       'detailed_commentary': detailedCommentary,

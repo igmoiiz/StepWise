@@ -349,20 +349,12 @@ class _AnalysisHistorySectionState extends State<AnalysisHistorySection>
                                         color: theme.colorScheme.primary,
                                       ),
                                       const SizedBox(width: 4),
-                                      Text(
-                                        'Market: ${history.analysis.marketAnalysis.estimatedMarketSize}',
-                                        style: theme.textTheme.bodySmall,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Icon(
-                                        Icons.people,
-                                        size: 16,
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Adoption: ${history.analysis.marketAnalysis.adoptionRate}',
-                                        style: theme.textTheme.bodySmall,
+                                      Expanded(
+                                        child: Text(
+                                          'Market: ${history.analysis.marketAnalysis.estimatedMarketSize}',
+                                          style: theme.textTheme.bodySmall,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -382,9 +374,10 @@ class _AnalysisHistorySectionState extends State<AnalysisHistorySection>
     );
   }
 
-  Color _getSuccessColor(int probability) {
-    if (probability >= 70) return Colors.green;
-    if (probability >= 40) return Colors.orange;
+  Color _getSuccessColor(String probability) {
+    final prob = int.tryParse(probability) ?? 0;
+    if (prob >= 70) return Colors.green;
+    if (prob >= 40) return Colors.orange;
     return Colors.red;
   }
 

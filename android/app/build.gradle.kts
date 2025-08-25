@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.stepwise"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = "29.0.13846066"
 
     compileOptions {

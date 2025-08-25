@@ -32,23 +32,33 @@ class UIStateProvider extends ChangeNotifier {
     _historyError = null;
     notifyListeners();
 
-    _firebaseService.getAnalysisHistory().listen(
-      (snapshot) {
-        _analysisHistory = snapshot.docs
-            .map((doc) => AnalysisHistory.fromFirestore(
-                  doc.data() as Map<String, dynamic>,
-                  doc.id,
-                ))
-            .toList();
-        _isLoadingHistory = false;
-        notifyListeners();
-      },
-      onError: (error) {
-        _historyError = "Failed to load history: $error";
-        _isLoadingHistory = false;
-        notifyListeners();
-      },
-    );
+    try {
+      _firebaseService.getAnalysisHistory().listen(
+        (snapshot) {
+          _analysisHistory = snapshot.docs
+              .map((doc) => AnalysisHistory.fromFirestore(
+                    doc.data() as Map<String, dynamic>,
+                    doc.id,
+                  ))
+              .toList();
+          _isLoadingHistory = false;
+          notifyListeners();
+        },
+        onError: (error) {
+          // Handle Firebase errors gracefully
+          _historyError = null; // Don't show error for Firebase issues
+          _analysisHistory = []; // Show empty state instead
+          _isLoadingHistory = false;
+          notifyListeners();
+        },
+      );
+    } catch (e) {
+      // Handle any initialization errors
+      _historyError = null;
+      _analysisHistory = [];
+      _isLoadingHistory = false;
+      notifyListeners();
+    }
   }
 
   Future<void> deleteAnalysis(String documentId) async {

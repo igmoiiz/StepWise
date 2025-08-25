@@ -52,10 +52,15 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
     super.dispose();
   }
 
-  Color _getSuccessColor(int probability) {
-    if (probability >= 70) return Colors.green;
-    if (probability >= 40) return Colors.orange;
-    return Colors.red;
+  Color _getSuccessProbabilityColor(String successProbability) {
+    final probability = int.tryParse(successProbability.replaceAll('%', '')) ?? 0;
+    if (probability >= 70) {
+      return Colors.green;
+    } else if (probability >= 40) {
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
   }
 
   @override
@@ -63,403 +68,610 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
     final theme = Theme.of(context);
     final analysis = widget.analysis;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SlideTransition(
-          position: _slideAnimations[0],
-          child: Card(
-            elevation: 6,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.business,
-                        color: theme.colorScheme.primary,
-                        size: 28,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Section
+          SlideTransition(
+            position: _slideAnimations[0],
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primaryContainer,
+                      theme.colorScheme.primaryContainer.withOpacity(0.7),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline,
+                          size: 32,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Startup Analysis Results',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: theme.colorScheme.outline.withOpacity(0.3),
+                        ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
+                      child: Text(
+                        '${analysis.domain} - ${analysis.productType}',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          height: 1.5,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Success Probability Section
+          SlideTransition(
+            position: _slideAnimations[1],
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: _getSuccessProbabilityColor(
+                              analysis.marketAnalysis.successProbability,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.trending_up,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Success Probability',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Text(
+                          analysis.marketAnalysis.successProbability,
+                          style: theme.textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: _getSuccessProbabilityColor(
+                              analysis.marketAnalysis.successProbability,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Container(
+                            height: 12,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: theme.colorScheme.surfaceContainerHighest,
+                            ),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: (int.tryParse(analysis.marketAnalysis.successProbability.replaceAll('%', '')) ?? 0) / 100,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: _getSuccessProbabilityColor(
+                                    analysis.marketAnalysis.successProbability,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Technical Features Section
+          SlideTransition(
+            position: _slideAnimations[2],
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.code,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Core Features',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    ...analysis.features.map(
+                      (feature) => Container(
+                        margin: const EdgeInsets.only(bottom: 20.0),
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: theme.colorScheme.outline.withOpacity(0.2),
+                          ),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    feature.name,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.secondaryContainer,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    feature.complexity,
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.onSecondaryContainer,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
                             Text(
-                              'Product Overview',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
+                              'Implementation Tasks:',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: theme.colorScheme.secondary,
                               ),
                             ),
-                            Text(
-                              '${analysis.domain} • ${analysis.productType}',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w500,
+                            const SizedBox(height: 12),
+                            ...feature.subtasks.map(
+                              (subtask) => Container(
+                                margin: const EdgeInsets.only(bottom: 8.0),
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.secondaryContainer.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle_outline,
+                                      size: 18,
+                                      color: theme.colorScheme.secondary,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        subtask,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        SlideTransition(
-          position: _slideAnimations[1],
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _getSuccessColor(
-                            analysis.marketAnalysis.successProbability,
+          const SizedBox(height: 20),
+
+          // Tech Stack Section
+          SlideTransition(
+            position: _slideAnimations[3],
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.tertiaryContainer,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.trending_up,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Success Probability',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Text(
-                        '${analysis.marketAnalysis.successProbability}%',
-                        style: theme.textTheme.displaySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: _getSuccessColor(
-                            analysis.marketAnalysis.successProbability,
+                          child: Icon(
+                            Icons.layers,
+                            color: theme.colorScheme.onTertiaryContainer,
+                            size: 28,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value:
-                              analysis.marketAnalysis.successProbability / 100,
-                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            _getSuccessColor(
-                              analysis.marketAnalysis.successProbability,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Suggested Tech Stack',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
-                          minHeight: 8,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildStackItem('Frontend', analysis.suggestedStack.frontend),
+                    _buildStackItem('Backend', analysis.suggestedStack.backend),
+                    _buildStackItem('Database', analysis.suggestedStack.db),
+                    _buildStackItem('Infrastructure', analysis.suggestedStack.infra),
+                    _buildStackItem('AI/ML', analysis.suggestedStack.ai),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        SlideTransition(
-          position: _slideAnimations[2],
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.analytics,
-                        color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Market Analysis',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+          const SizedBox(height: 20),
+
+          // Market Analysis Section
+          SlideTransition(
+            position: _slideAnimations[4],
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.secondaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.analytics,
+                            color: theme.colorScheme.onSecondaryContainer,
+                            size: 28,
+                          ),
                         ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Market Analysis',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildMarketMetric('Market Size', analysis.marketAnalysis.estimatedMarketSize),
+                    _buildMarketMetric('Customer Value', analysis.marketAnalysis.customerValue),
+                    _buildMarketMetric('Adoption Rate', analysis.marketAnalysis.adoptionRate),
+                    _buildMarketMetric('Competition Level', analysis.marketAnalysis.competitionLevel),
+                    const SizedBox(height: 20),
+                    
+                    // Target Customers
+                    Text(
+                      'Target Customers',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildMarketMetric(
-                    'Market Size',
-                    analysis.marketAnalysis.estimatedMarketSize,
-                  ),
-                  _buildMarketMetric(
-                    'Customer Value',
-                    analysis.marketAnalysis.customerValue,
-                  ),
-                  _buildMarketMetric(
-                    'Adoption Rate',
-                    analysis.marketAnalysis.adoptionRate,
-                  ),
-                  _buildMarketMetric(
-                    'Competition Level',
-                    analysis.marketAnalysis.competitionLevel,
-                  ),
-                  const SizedBox(height: 16),
-                  ExpansionTile(
-                    title: const Text('Critical Commentary'),
-                    leading: const Icon(Icons.warning_amber),
-                    children: [
-                      Padding(
+                    ),
+                    const SizedBox(height: 12),
+                    ...analysis.marketAnalysis.targetCustomers.map(
+                      (customer) => Container(
+                        margin: const EdgeInsets.only(bottom: 12.0),
                         padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          analysis.marketAnalysis.detailedCommentary,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SlideTransition(
-          position: _slideAnimations[3],
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.people,
-                        color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Target Customers',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...analysis.marketAnalysis.targetCustomers.map(
-                    (customer) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Card(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                customer.segment,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                customer.description,
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                            ],
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: theme.colorScheme.outline.withOpacity(0.2),
                           ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              customer.segment,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              customer.description,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SlideTransition(
-          position: _slideAnimations[4],
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.warning, color: Colors.red, size: 24),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Major Risks',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...analysis.marketAnalysis.risks.map(
-                    (risk) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.fiber_manual_record,
-                            color: Colors.red,
-                            size: 8,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              risk,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ),
-                        ],
+                    
+                    const SizedBox(height: 20),
+                    // Risks
+                    Text(
+                      'Major Risks',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SlideTransition(
-          position: _slideAnimations[5],
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.code,
-                        color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Technical Details',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ExpansionTile(
-                    title: const Text('Features & Complexity'),
-                    children: analysis.features
-                        .map(
-                          (feature) => ListTile(
-                            title: Text(feature.name),
-                            subtitle: Text('Complexity: ${feature.complexity}'),
-                            trailing: Chip(
-                              label: Text('${feature.subtasks.length} tasks'),
-                              backgroundColor:
-                                  theme.colorScheme.primaryContainer,
-                            ),
+                    const SizedBox(height: 12),
+                    ...analysis.marketAnalysis.risks.map(
+                      (risk) => Container(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.red.withOpacity(0.3),
                           ),
-                        )
-                        .toList(),
-                  ),
-                  ExpansionTile(
-                    title: const Text('Suggested Tech Stack'),
-                    children: [
-                      _buildStackItem(
-                        'Frontend',
-                        analysis.suggestedStack.frontend,
-                      ),
-                      _buildStackItem(
-                        'Backend',
-                        analysis.suggestedStack.backend,
-                      ),
-                      _buildStackItem('Database', analysis.suggestedStack.db),
-                      _buildStackItem(
-                        'Infrastructure',
-                        analysis.suggestedStack.infra,
-                      ),
-                      _buildStackItem('AI/ML', analysis.suggestedStack.ai),
-                    ],
-                  ),
-                  ExpansionTile(
-                    title: const Text('Development Roadmap'),
-                    children: analysis.roadmap
-                        .asMap()
-                        .entries
-                        .map(
-                          (entry) => ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: theme.colorScheme.primary,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
                               child: Text(
-                                '${entry.key + 1}',
-                                style: TextStyle(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.bold,
+                                risk,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  height: 1.4,
                                 ),
                               ),
                             ),
-                            title: Text(entry.value),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 20),
+
+          // Development Roadmap Section
+          SlideTransition(
+            position: _slideAnimations[5],
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.timeline,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Development Roadmap',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    ...analysis.roadmap.asMap().entries.map(
+                      (entry) => Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: theme.colorScheme.outline.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${entry.key + 1}',
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    color: theme.colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                entry.value,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
     );
   }
 
   Widget _buildMarketMetric(String label, String value) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
             ),
           ),
+          const SizedBox(height: 8),
           Text(
             value,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
+              height: 1.4,
             ),
           ),
         ],
@@ -469,11 +681,38 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
 
   Widget _buildStackItem(String category, String technology) {
     final theme = Theme.of(context);
-    return ListTile(
-      title: Text(category),
-      trailing: Chip(
-        label: Text(technology),
-        backgroundColor: theme.colorScheme.secondaryContainer,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            category,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              technology,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+        ],
       ),
     );
   }

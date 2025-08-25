@@ -52,10 +52,14 @@ class _AnalysisInputSectionState extends State<AnalysisInputSection>
     _pulseController.repeat(reverse: true);
 
     final apiProvider = context.read<ApplicationProgramInterfaceProvider>();
-    await apiProvider.breakdownGeneration(_ideaController.text.trim());
+    final result = await apiProvider.breakdownGeneration(_ideaController.text.trim());
 
     _pulseController.stop();
     _pulseController.reset();
+    
+    debugPrint("UI: Analysis result received: ${result != null ? 'Success' : 'Failed'}");
+    debugPrint("UI: Current analysis in provider: ${apiProvider.currentAnalysis != null ? 'Available' : 'Null'}");
+    debugPrint("UI: Provider error: ${apiProvider.error}");
   }
 
   @override
