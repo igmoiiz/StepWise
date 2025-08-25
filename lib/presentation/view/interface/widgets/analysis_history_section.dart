@@ -198,24 +198,30 @@ class _AnalysisHistorySectionState extends State<AnalysisHistorySection>
                   ),
                 )
               else if (uiState.analysisHistory.isEmpty)
-                const SliverFillRemaining(
+                SliverFillRemaining(
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.history, size: 64, color: Colors.grey),
-                        SizedBox(height: 16),
+                        Icon(
+                          Icons.history,
+                          size: 64,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 16),
                         Text(
                           'No analysis history yet',
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w500,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Start by analyzing your first startup idea!',
-                          style: TextStyle(color: Colors.grey),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
@@ -249,7 +255,7 @@ class _AnalysisHistorySectionState extends State<AnalysisHistorySection>
                                                 .analysis
                                                 .marketAnalysis
                                                 .successProbability,
-                                          ).withOpacity(0.1),
+                                          ).withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),

@@ -15,12 +15,17 @@ ThemeData darkMode = ThemeData(
   useMaterial3: true,
   fontFamily: GoogleFonts.urbanist().fontFamily,
   colorScheme: ColorScheme.dark(
-    primary: const Color(0xFF1F3A93), // Primary Color -> Main Buttons etc
-    surface: const Color(0xFF121212), //  Background Color
-    onSurface: const Color(0xFF1E1E1E), //  Panels and cards accent Color
-    onPrimary: const Color(0xFFFFFFFF), //  Main Text Color
-    onTertiary: const Color(0xFFBDC3C7), //  Subtext and Labels
-    error: const Color(0xFFE74C3C), //  Error Color
-    secondary: const Color(0xFF27AE60), //  Success Color
+    primary: const Color(0xFF6366F1), // Primary Color -> Main Buttons etc
+    surface: const Color(0xFF0F0F0F), //  Background Color
+    onSurface: const Color(0xFFE5E5E5), //  Main Text Color - High contrast
+    surfaceContainerHighest: const Color(0xFF1F1F1F), //  Panels and cards accent Color
+    onSurfaceVariant: const Color(0xFFB0B0B0), //  Subtext and Labels - Better contrast
+    onPrimary: const Color(0xFFFFFFFF), //  Button text
+    error: const Color(0xFFEF4444), //  Error Color
+    secondary: const Color(0xFF10B981), //  Success Color
+    primaryContainer: const Color(0xFF4338CA),
+    secondaryContainer: const Color(0xFF059669),
+    errorContainer: const Color(0xFF7F1D1D),
+    onErrorContainer: const Color(0xFFFECACA),
   ),
 );

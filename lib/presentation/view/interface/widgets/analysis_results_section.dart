@@ -162,7 +162,7 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
                         child: LinearProgressIndicator(
                           value:
                               analysis.marketAnalysis.successProbability / 100,
-                          backgroundColor: theme.colorScheme.surfaceVariant,
+                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _getSuccessColor(
                               analysis.marketAnalysis.successProbability,
@@ -271,7 +271,7 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
                     (customer) => Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: Card(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(

@@ -114,9 +114,7 @@ class _AnalysisInputSectionState extends State<AnalysisInputSection>
                           Text(
                             'Be specific about your product, target market, and value proposition. The more detail you provide, the better the analysis.',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.7,
-                              ),
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -126,11 +124,17 @@ class _AnalysisInputSectionState extends State<AnalysisInputSection>
                             decoration: InputDecoration(
                               hintText:
                                   'e.g., A mobile app that connects local farmers directly with consumers, eliminating middlemen and providing fresh produce at lower prices...',
+                              hintStyle: TextStyle(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               filled: true,
-                              fillColor: theme.colorScheme.surface,
+                              fillColor: theme.colorScheme.surfaceContainerHighest,
+                            ),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 20),
