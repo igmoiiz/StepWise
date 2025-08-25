@@ -97,6 +97,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
       // Simulate login process
       await Future.delayed(const Duration(seconds: 2), () {
+        //  Signup authentication flow
         _authController
             .signInWithEmailPassword(
               _controllers.emailController.text,
@@ -104,7 +105,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               context,
             )
             .then((value) {
-              Navigator.of(context).push(elegantRoute(const InterfacePage()));
+              Navigator.of(
+                context,
+              ).pushReplacement(elegantRoute(const InterfacePage()));
               successBar(context: context, message: "Signed in Successfully");
             })
             .onError((error, stackTrace) {

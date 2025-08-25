@@ -1,8 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stepwise/core/components/failure/faliure_bar.dart';
+import 'package:stepwise/core/components/success/success_bar.dart';
+import 'package:stepwise/core/controller/authentication/auth_controller.dart';
+import 'package:stepwise/core/controller/controllers.dart';
 import 'package:stepwise/presentation/utilities/components/custom_animated_button.dart';
 import 'package:stepwise/presentation/utilities/components/custom_input_field.dart';
 import 'package:stepwise/presentation/utilities/components/validation_helper.dart';
+import 'package:stepwise/presentation/utilities/navigation/elegant_route.dart';
+import 'package:stepwise/presentation/view/authentication/login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -12,19 +20,11 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  //  Instance for controllers for variable management
+  final Controllers _controllers = Controllers();
 
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  bool _isLoading = false;
-  bool _agreeToTerms = false;
+  //  Instance for authentication controller
+  final AuthController _authController = AuthController();
 
   @override
   void initState() {
@@ -33,43 +33,50 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
   }
 
   void _initializeAnimations() {
-    _fadeController = AnimationController(
+    _controllers.fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _slideController = AnimationController(
+    _controllers.slideController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    _controllers.fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controllers.fadeController,
+        curve: Curves.easeInOut,
+      ),
     );
 
-    _slideAnimation =
+    _controllers.slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+          CurvedAnimation(
+            parent: _controllers.slideController,
+            curve: Curves.easeOutCubic,
+          ),
         );
 
-    _fadeController.forward();
-    _slideController.forward();
+    _controllers.fadeController.forward();
+    _controllers.slideController.forward();
   }
 
+  //  Dispose the controllers after use for better life cycle of the application
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _controllers.fadeController.dispose();
+    _controllers.slideController.dispose();
+    _controllers.nameController.dispose();
+    _controllers.emailController.dispose();
+    _controllers.passwordController.dispose();
+    _controllers.confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _handleSignUp() async {
-    if (_formKey.currentState!.validate()) {
-      if (!_agreeToTerms) {
+    if (_controllers.formKey.currentState!.validate()) {
+      if (!_controllers.agreeToTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -82,9 +89,34 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
         return;
       }
 
-      setState(() => _isLoading = true);
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() => _isLoading = false);
+      setState(() => _controllers.isLoading = true);
+      await Future.delayed(const Duration(seconds: 2), () {
+        //  Signup logic
+        _authController
+            .signUpWithEmailPassword(
+              _controllers.emailController.text,
+              _controllers.passwordController.text,
+              context,
+            )
+            .then((value) {
+              Navigator.of(
+                context,
+              ).pushReplacement(elegantRoute(const LoginPage()));
+              successBar(
+                context: context,
+                message:
+                    "Signed up Successfully. Please Login to see new content",
+              );
+            })
+            .onError((error, stackTrace) {
+              faliureBar(
+                context: context,
+                message:
+                    "Error While Signing up Please Try again Later: $error",
+              );
+            });
+      });
+      setState(() => _controllers.isLoading = false);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,13 +148,13 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
       ),
       body: SafeArea(
         child: FadeTransition(
-          opacity: _fadeAnimation,
+          opacity: _controllers.fadeAnimation,
           child: SlideTransition(
-            position: _slideAnimation,
+            position: _controllers.slideAnimation,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Form(
-                key: _formKey,
+                key: _controllers.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -153,7 +185,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       label: 'Full Name',
                       hint: 'Enter your full name',
                       icon: Icons.person_outlined,
-                      controller: _nameController,
+                      controller: _controllers.nameController,
                       validator: ValidationHelper.validateName,
                       keyboardType: TextInputType.name,
                     ),
@@ -164,7 +196,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       label: 'Email',
                       hint: 'Enter your email address',
                       icon: Icons.email_outlined,
-                      controller: _emailController,
+                      controller: _controllers.emailController,
                       validator: ValidationHelper.validateEmail,
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -176,7 +208,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       hint: 'Create a password',
                       icon: Icons.lock_outlined,
                       isPassword: true,
-                      controller: _passwordController,
+                      controller: _controllers.passwordController,
                       validator: ValidationHelper.validatePassword,
                     ),
 
@@ -187,11 +219,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       hint: 'Confirm your password',
                       icon: Icons.lock_outlined,
                       isPassword: true,
-                      controller: _confirmPasswordController,
+                      controller: _controllers.confirmPasswordController,
                       validator: (value) =>
                           ValidationHelper.validateConfirmPassword(
                             value,
-                            _passwordController.text,
+                            _controllers.passwordController.text,
                           ),
                     ),
 
@@ -202,9 +234,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Checkbox(
-                          value: _agreeToTerms,
+                          value: _controllers.agreeToTerms,
                           onChanged: (value) {
-                            setState(() => _agreeToTerms = value ?? false);
+                            setState(
+                              () => _controllers.agreeToTerms = value ?? false,
+                            );
                           },
                           activeColor: colorScheme.primary,
                           shape: RoundedRectangleBorder(
@@ -250,7 +284,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                     CustomAnimatedButton(
                       text: 'Create Account',
                       onPressed: _handleSignUp,
-                      isLoading: _isLoading,
+                      isLoading: _controllers.isLoading,
                     ),
 
                     const SizedBox(height: 32),

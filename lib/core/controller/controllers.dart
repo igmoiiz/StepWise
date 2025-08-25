@@ -18,6 +18,7 @@ class Controllers {
   late Animation<double> fadeAnimation;
   late Animation<Offset> slideAnimation;
 
-  //  Loading Variable
+  //  Loading Variable and Agree to terms and condition variable
   bool isLoading = false;
+  bool agreeToTerms = false;
 }
