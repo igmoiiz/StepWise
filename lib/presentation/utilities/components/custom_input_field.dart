@@ -10,6 +10,7 @@ class CustomInputField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
 
   const CustomInputField({
     super.key,
@@ -19,6 +20,7 @@ class CustomInputField extends StatefulWidget {
     this.isPassword = false,
     required this.controller,
     this.validator,
+    this.keyboardType,
   });
 
   @override
@@ -81,6 +83,7 @@ class _CustomInputFieldState extends State<CustomInputField>
               controller: widget.controller,
               obscureText: widget.isPassword ? _isObscured : false,
               validator: widget.validator,
+              keyboardType: widget.keyboardType,
               onTap: () {
                 setState(() => _isFocused = true);
                 _animationController.forward();
