@@ -205,17 +205,24 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
                               borderRadius: BorderRadius.circular(6),
                               color: theme.colorScheme.surfaceContainerHighest,
                             ),
-                            child: FractionallySizedBox(
-                              alignment: Alignment.centerLeft,
-                              widthFactor: (int.tryParse(analysis.marketAnalysis.successProbability.replaceAll('%', '')) ?? 0) / 100,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: _getSuccessProbabilityColor(
-                                    analysis.marketAnalysis.successProbability,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final probability = int.tryParse(analysis.marketAnalysis.successProbability.replaceAll('%', '')) ?? 0;
+                                final width = constraints.maxWidth * (probability / 100);
+                                return Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    width: width,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: _getSuccessProbabilityColor(
+                                        analysis.marketAnalysis.successProbability,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -691,25 +698,21 @@ class _AnalysisResultsSectionState extends State<AnalysisResultsSection>
           color: theme.colorScheme.outline.withOpacity(0.2),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             category,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
             ),
           ),
-          Flexible(
-            child: Text(
-              technology,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.end,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+          const SizedBox(height: 8),
+          Text(
+            technology,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.4,
             ),
           ),
         ],

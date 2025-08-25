@@ -313,7 +313,7 @@ class _AnalysisHistorySectionState extends State<AnalysisHistorySection>
                                           ),
                                         ),
                                         child: Text(
-                                          '${history.analysis.marketAnalysis.successProbability}%',
+                                          history.analysis.marketAnalysis.successProbability,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
